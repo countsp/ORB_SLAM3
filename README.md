@@ -1,5 +1,107 @@
 # ORB-SLAM3
 
+## 安装问题
+**Error1:**
+```
+In file included from /usr/local/include/pangolin/utils/signal_slot.h:3,
+                 from /usr/local/include/pangolin/windowing/window.h:35,
+                 from /usr/local/include/pangolin/display/display.h:34,
+                 from /usr/local/include/pangolin/pangolin.h:38,
+                 from /home/a616708946/slambook/ch5/code/disparity.cpp:8:
+/usr/local/include/sigslot/signal.hpp:109:79: error: ‘decay_t’ is not a member of ‘std’; did you mean ‘decay’?
+  109 | constexpr bool is_weak_ptr_compatible_v = detail::is_weak_ptr_compatible<std::decay_t<P>>::value;
+      |                                                                               ^~~~~~~
+      |                                                                               decay
+/usr/local/include/sigslot/signal.hpp:109:79: error: ‘decay_t’ is not a member of ‘std’; did you mean ‘decay’?
+  109 | constexpr bool is_weak_ptr_compatible_v = detail::is_weak_ptr_compatible<std::decay_t<P>>::value;
+      |                                                                               ^~~~~~~
+      |                                                                               decay
+/usr/local/include/sigslot/signal.hpp:109:87: error: template argument 1 is invalid
+  109 | constexpr bool is_weak_ptr_compatible_v = detail::is_weak_ptr_compatible<std::decay_t<P>>::value;
+```
+
+**update Cmakelists.txt from -std=c++11 to -std=c++14**
+
+```
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+   add_definitions(-DCOMPILEDWITHC11)
+   message(STATUS "Using flag -std=c++14.")
+elseif(COMPILER_SUPPORTS_CXX0X)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+   add_definitions(-DCOMPILEDWITHC0X)
+   message(STATUS "Using flag -std=c++0x.")
+else()
+   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+```
+
+**error2**
+
+This is an error due to the Eigen version.
+```
+   ../core/base_edge.h: 33:10: fatal error: Eigen/Core: No such file or directory 
+
+```
+```
+#include <Eigen/Core>
+```
+
+Replace all of #include <Eigen/(any packages)> to #include <eigen3/Eigen/(any packages)>
+
+For example:
+```
+#include <Eigen/Core>
+```
+
+to
+```
+#include <eigen3/Eigen/Core>
+```
+
+**error3**
+
+
+Ros build issues (./build_ros.sh) - This issue is similar to build.sh error, just replace all -std=c++11 to -std=c++14.
+```
+# Check C++11 or C++0x support
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+   add_definitions(-DCOMPILEDWITHC11)
+   message(STATUS "Using flag -std=c++14.")
+elseif(COMPILER_SUPPORTS_CXX0X)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+   add_definitions(-DCOMPILEDWITHC0X)
+   message(STATUS "Using flag -std=c++0x.")
+else()
+   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+```
+
+**error4**
+
+Ros opencv build issue - This issue goes for opencv build error. Replace the find_package(OpenCV QUIET)
+
+```
+find_package(OpenCV 4.0 QUIET)
+if(NOT OpenCV_FOUND)
+   find_package(OpenCV 2.4.3 QUIET)
+   if(NOT OpenCV_FOUND)
+      message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
+   endif()
+endif()
+```
+
+Compile using ./build_ros.sh 3-4 times and it'll build until you stop seeing any sorta warnings.
+
+
+
+
 ### V1.0, December 22th, 2021
 **Authors:** Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, [José M. M. Montiel](http://webdiis.unizar.es/~josemari/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/).
 
