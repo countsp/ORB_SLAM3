@@ -148,6 +148,21 @@ Xw.at<float>(1, 0) = Xw_eigen(1);
 Xw.at<float>(2, 0) = Xw_eigen(2);
 
 ```
+修改 ViewerAR.cc 第 530 行
+
+找到：
+```
+cv::Mat Xw = pMP->GetWorldPos();
+```
+修改为：
+```
+Eigen::Vector3f Xw_eigen = pMP->GetWorldPos();
+cv::Mat Xw(3, 1, CV_32F);
+
+Xw.at<float>(0, 0) = Xw_eigen(0);
+Xw.at<float>(1, 0) = Xw_eigen(1);
+Xw.at<float>(2, 0) = Xw_eigen(2);
+```
 
 **error7**
 ```
