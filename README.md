@@ -1,5 +1,13 @@
 # ORB-SLAM3
 
+## 要使用ros
+将Examples_old中的ROS拷贝到Examples中，然后运行
+
+```
+./build_ros.sh
+```
+
+
 ## 安装问题
 **Error1:**
 ```
@@ -99,8 +107,14 @@ endif()
 
 Compile using ./build_ros.sh 3-4 times and it'll build until you stop seeing any sorta warnings.
 
+**error5**
+```
+ModuleNotFoundError: No module named 'rospkg'
+```
 
-
+```
+export PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages
+```
 
 ### V1.0, December 22th, 2021
 **Authors:** Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, [José M. M. Montiel](http://webdiis.unizar.es/~josemari/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/).
