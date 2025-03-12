@@ -149,6 +149,11 @@ Xw.at<float>(2, 0) = Xw_eigen(2);
 
 ```
 
+**error7**
+```
+/home/office2004/catkin_ws/orb-slam3/src/ORB_SLAM3/Examples/ROS/ORB_SLAM3/src/AR/ViewerAR.cc:405:53: error: no matching function for call to ‘std::vector<cv::Mat>::push_back(Eigen::Vector3f)’
+  405 |                 vPoints.push_back(pMP->GetWorldPos());
+```
 
 在 ViewerAR.cc 第 542 行，找到：
 ```
