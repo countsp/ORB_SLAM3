@@ -125,6 +125,48 @@ ModuleNotFoundError: No module named 'rospkg'
 export PYTHONPATH=$PYTHONPATH:/usr/lib/python3/dist-packages
 ```
 
+**error6**
+```
+/home/office2004/catkin_ws/orb-slam3/src/ORB_SLAM3/Examples/ROS/ORB_SLAM3/src/AR/ViewerAR.cc: In member function ‘void ORB_SLAM3::Plane::Recompute()’:
+/home/office2004/catkin_ws/orb-slam3/src/ORB_SLAM3/Examples/ROS/ORB_SLAM3/src/AR/ViewerAR.cc:542:42: error: conversion from ‘Eigen::Vector3f’ {aka ‘Eigen::Matrix<float, 3, 1>’} to non-scalar type ‘cv::Mat’ requested
+  542 |             cv::Mat Xw = pMP->GetWorldPos();
+```
+
+
+在 ViewerAR.cc 第 542 行，找到：
+```
+cv::Mat Xw = pMP->GetWorldPos();
+```
+并修改为：
+```
+Eigen::Vector3f Xw_eigen = pMP->GetWorldPos();  // 获取 Eigen 3D 坐标
+cv::Mat Xw(3, 1, CV_32F);  // OpenCV 3×1 矩阵
+
+// 逐元素拷贝 Eigen 矩阵数据到 OpenCV Mat
+Xw.at<float>(0, 0) = Xw_eigen(0);
+Xw.at<float>(1, 0) = Xw_eigen(1);
+Xw.at<float>(2, 0) = Xw_eigen(2);
+
+```
+
+
+在 ViewerAR.cc 第 542 行，找到：
+```
+cv::Mat Tcw = mpSLAM->TrackMonocular(cv_ptr->image, cv_ptr->header.stamp.toSec());
+```
+改为
+```
+//modified 250312
+    Sophus::SE3f Tcw_SE3 = mpSLAM->TrackMonocular(cv_ptr->image, cv_ptr->header.stamp.toSec());
+    Eigen::Matrix4f Tcw_eigen = Tcw_SE3.matrix();  // 转换为 Eigen 4×4 矩阵
+    cv::Mat Tcw(4, 4, CV_32F);  // OpenCV 4×4 浮点矩阵
+
+    // 逐元素拷贝 Eigen 矩阵数据到 OpenCV Mat
+    for(int i = 0; i < 4; i++)
+        for(int j = 0; j < 4; j++)
+            Tcw.at<float>(i, j) = Tcw_eigen(i, j);
+```
+
 ### V1.0, December 22th, 2021
 **Authors:** Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, [José M. M. Montiel](http://webdiis.unizar.es/~josemari/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/).
 
