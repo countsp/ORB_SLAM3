@@ -7,7 +7,16 @@
 ./build_ros.sh
 ```
 
+```
+gedit ~/.bashrc
+export ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH}:/home/office2004/catkin_ws/orb-slam3/src/ORB_SLAM3/Examples/ROS
+```
 
+就可以运行
+
+```
+rosrun ORB_SLAM3 Stereo_Inertial ./src/ORB_SLAM3/Vocabulary/ORBvoc.txt ./src/ORB_SLAM3/Examples_old/Stereo-Inertial/EuRoC.yaml true
+```
 ## 安装问题
 **Error1:**
 ```
